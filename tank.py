@@ -11,10 +11,11 @@ class Level:
             self.map.append(x)
         fmap = open(file,'r')
         print("Wczytuje ",file)
-        readdata = fmap.read()
-        #print(readdata)
-        #TODO load from file to array
-
+        for i in range(0,height):
+            line = fmap.readline()
+            #print(line)
+            for j in range(0,width):
+                self.map[i][j] = int(line[j]) #string from file to int in list
         fmap.close()
 
     #TODO displaying map in console

@@ -33,7 +33,7 @@ class Level:
                 return i
             else:
                 return -1
-
+    #TODO check for enemy tank and display it
     def display_map(self):
         for i in range(0,self.height):
             if(i%2 != 0):

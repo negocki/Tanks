@@ -22,6 +22,26 @@ class Tank():
         self.y_pos = y
         self.rotation = rot
 
+    def move(self,dir):
+        if (dir == 1):
+            print()
+            #up-right
+        elif (dir == 2):
+            print()
+            #right
+        elif (dir == 3):
+            print()
+            #down-right
+        elif (dir == 4):
+            print()
+            #down-left
+        elif (dir == 5):
+            print()
+            #left
+        elif (dir == 6):
+            print()
+            #up-left
+        #TODO check collision and move
 class PlayerTank(Tank):
     lifes = 3
     tank_symbol = "@"

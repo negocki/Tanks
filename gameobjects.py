@@ -7,7 +7,42 @@ class Bullet():
         self.y_pos = y
         self.rotation = rot
     def move(self):
-        print() # TODO move bullet to next tile
+        if (self.rotation == 1):
+            if(self.y_pos%2 == 0):
+                self.y_pos -= 1
+            else:
+                self.y_pos -= 1
+                self.x_pos += 1
+            #up-right
+        elif (self.rotation == 2):
+            self.x_pos += 1
+            self.rotation = 2
+            #right
+        elif (self.rotation == 3):
+            if (self.y_pos % 2 == 0):
+                self.y_pos += 1
+            else:
+                self.y_pos += 1
+                self.x_pos += 1
+            #down-right
+        elif (self.rotation == 4):
+            if (not(self.y_pos % 2 == 0)):
+                self.y_pos += 1
+            else:
+                self.y_pos += 1
+                self.x_pos -= 1
+            #down-left
+        elif (self.rotation == 5):
+            self.x_pos -= 1
+            #left
+        elif (self.rotation == 6):
+            if (not(self.y_pos % 2 == 0)):
+                self.y_pos -= 1
+            else:
+                self.y_pos -= 1
+                self.x_pos -= 1
+            #up-left
+
     def check_collision(self):
         print() #TODO checking for player or enemy or obstacle
 

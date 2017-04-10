@@ -8,6 +8,9 @@ class Level:
     players = [playerscount]
     players[0] = PlayerTank(10,5,1)
     enemies = [maxenemies]
+    maxbullets = 2
+    bullets = [maxbullets]
+    bullets[0] = Bullet(-1,-1,6)
 
     def __init__(self,file,wid,hei): #opening file with map and loading it to 2D list
         self.map = []
@@ -34,12 +37,21 @@ class Level:
             else:
                 return -1
     #TODO check for enemy tank and display it
+    def check_for_bullet(self,x,y):
+        isbullet = False
+        for bullet,i in enumerate(self.bullets):
+            if((self.bullets[bullet].x_pos == x) and (self.bullets[bullet].y_pos == y)):
+                isbullet = True
+        return isbullet
     def check_collision(self,x,y):
         if(self.map[y][x] != 0): #TODO tank collision check
+            print("Collision: ",x,y) #collision debug
             return True
         else:
             return False
-
+    def update_bullets(self):
+        print()
+        #TODO update bullet position and check collision each tick
     def display_map(self):
         system('cls')  # clearing console
         for i in range(0,self.height):
@@ -49,6 +61,8 @@ class Level:
                 detected_tank = self.check_for_player_tank(j,i)
                 if(detected_tank != -1):
                     print(self.players[detected_tank].tank_symbol, end=" ") #printing player tank symbol
+                elif(self.check_for_bullet(j,i)):
+                    print("o", end=" ")
                 elif(self.map[i][j]==0):
                     print(".", end=" ") #empty field
                 elif(self.map[i][j]==1):
@@ -56,5 +70,5 @@ class Level:
                 else:
                     print("%",end=" ") #destructible obstacle
             print()
-
+        print()
         # TODO more tiles

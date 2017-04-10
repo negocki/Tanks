@@ -27,7 +27,8 @@ class Tank():
             print()
             #up-right
         elif (dir == 2):
-            print()
+            self.x_pos += 1
+            self.rotation = 2
             #right
         elif (dir == 3):
             print()
@@ -36,7 +37,8 @@ class Tank():
             print()
             #down-left
         elif (dir == 5):
-            print()
+            self.x_pos -= 1
+            self.rotation = 5
             #left
         elif (dir == 6):
             print()

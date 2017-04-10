@@ -1,5 +1,5 @@
 from gameobjects import *
-
+from os import system
 class Level:
     width = 16
     height = 10 #default
@@ -34,7 +34,14 @@ class Level:
             else:
                 return -1
     #TODO check for enemy tank and display it
+    def check_collision(self,x,y):
+        if(self.map[y][x] != 0):
+            return True
+        else:
+            return False
+
     def display_map(self):
+        system('cls')  # clearing console
         for i in range(0,self.height):
             if(i%2 != 0):
                 print(" ",end="")

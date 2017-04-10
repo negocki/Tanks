@@ -35,7 +35,7 @@ class Level:
                 return -1
     #TODO check for enemy tank and display it
     def check_collision(self,x,y):
-        if(self.map[y][x] != 0):
+        if(self.map[y][x] != 0): #TODO tank collision check
             return True
         else:
             return False

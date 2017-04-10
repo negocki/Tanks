@@ -24,24 +24,44 @@ class Tank():
 
     def move(self,dir):
         if (dir == 1):
-            print()
+            self.rotation = 1
+            if(self.y_pos%2 == 0):
+                self.y_pos -= 1
+            else:
+                self.y_pos -= 1
+                self.x_pos += 1
             #up-right
         elif (dir == 2):
             self.x_pos += 1
             self.rotation = 2
             #right
         elif (dir == 3):
-            print()
+            self.rotation = 3
+            if (self.y_pos % 2 == 0):
+                self.y_pos += 1
+            else:
+                self.y_pos += 1
+                self.x_pos += 1
             #down-right
         elif (dir == 4):
-            print()
+            if (not(self.y_pos % 2 == 0)):
+                self.y_pos += 1
+            else:
+                self.y_pos += 1
+                self.x_pos -= 1
+            self.rotation = 4
             #down-left
         elif (dir == 5):
             self.x_pos -= 1
             self.rotation = 5
             #left
         elif (dir == 6):
-            print()
+            self.rotation = 6
+            if (not(self.y_pos % 2 == 0)):
+                self.y_pos -= 1
+            else:
+                self.y_pos -= 1
+                self.x_pos -= 1
             #up-left
         #TODO check collision and move
 class PlayerTank(Tank):

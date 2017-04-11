@@ -67,11 +67,12 @@ class Game():
                     self.gamelevel.bullets.append(Bullet(self.gamelevel.players[0].x_pos,self.gamelevel.players[0].y_pos,self.gamelevel.players[0].rotation))
             else:
                 continue
-            self.gamelevel.bullet_collision_check()
+
             for bullet,i in enumerate(self.gamelevel.bullets):
                 self.gamelevel.bullets[bullet].move()
                 if((self.gamelevel.bullets[bullet].x_pos < 0) or (self.gamelevel.bullets[bullet].x_pos > self.width) or (self.gamelevel.bullets[bullet].y_pos < 0) or (self.gamelevel.bullets[bullet].y_pos > self.height)):
                     del(self.gamelevel.bullets[bullet])
+            self.gamelevel.bullet_collision_check()
             print()
             self.gamelevel.display_map()
             print()

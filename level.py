@@ -3,11 +3,12 @@ from os import system
 class Level:
     width = 16
     height = 10 #default
-    maxenemies = 5
+    maxenemies = 1
     playerscount = 1 #how many players
     players = [playerscount]
     players[0] = PlayerTank(10,5,1)
     enemies = [maxenemies]
+    enemies[0] = Tank(6,1,2)
     maxbullets = 2
     bullets = [maxbullets]
     bullets[0] = Bullet(-1,-1,6)
@@ -36,6 +37,13 @@ class Level:
                 return i
             else:
                 return -1
+
+    def check_for_enemy_tank(self, x, y):  # function for checking if there is a tank at x,y
+        for i,tank in enumerate(self.enemies):
+            if ((self.enemies[i].x_pos == x) and (self.enemies[i].y_pos == y)):
+                return i
+            else:
+                return -1
     #TODO check for enemy tank and display it
     def check_for_bullet(self,x,y):
         isbullet = False
@@ -53,6 +61,7 @@ class Level:
         for ind, bullet in enumerate(self.bullets):
             bullet_x = self.bullets[ind].x_pos
             bullet_y = self.bullets[ind].y_pos
+            enemy_tank = self.check_for_enemy_tank(bullet_x,bullet_y)
             if(bullet_x>0 and bullet_x<self.width and bullet_y>0 and bullet_y<self.height):
                 if(self.map[bullet_y][bullet_x] == 2):
                     self.map[bullet_y][bullet_x] = 0
@@ -61,6 +70,11 @@ class Level:
                 elif(self.map[bullet_y][bullet_x] == 1):
                     del(self.bullets[ind])
                     print("kolizja z niezniszczalnym",bullet_x,bullet_y)
+                elif(enemy_tank != -1):
+                    if(len(self.enemies)>0):
+                        del(self.bullets[ind])
+                        del(self.enemies[enemy_tank])
+                        self.players[0].score+=100
         #TODO check collision each tick
     def display_map(self):
         system('cls')  # clearing console
@@ -69,8 +83,11 @@ class Level:
                 print(" ",end="")
             for j in range(0,self.width):
                 detected_tank = self.check_for_player_tank(j,i)
+                detected_enemy = self.check_for_enemy_tank(j,i)
                 if(detected_tank != -1):
                     print(self.players[detected_tank].tank_symbol, end=" ") #printing player tank symbol
+                elif(detected_enemy != -1 and len(self.enemies)>0):
+                    print("X", end=" ")
                 elif(self.check_for_bullet(j,i)):
                     print("o", end=" ")
                 elif(self.map[i][j]==0):

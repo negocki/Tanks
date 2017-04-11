@@ -102,6 +102,7 @@ class Tank():
 class PlayerTank(Tank):
     lifes = 3
     tank_symbol = "@"
+    score = 0
     def __init__(self,x,y,rot):
         self.x_pos = x
         self.y_pos = y

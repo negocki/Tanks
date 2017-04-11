@@ -49,9 +49,19 @@ class Level:
             return True
         else:
             return False
-    def update_bullets(self):
-        print()
-        #TODO update bullet position and check collision each tick
+    def bullet_collision_check(self):
+        for ind, bullet in enumerate(self.bullets):
+            bullet_x = self.bullets[ind].x_pos
+            bullet_y = self.bullets[ind].y_pos
+            if(bullet_x>0 and bullet_x<self.width and bullet_y>0 and bullet_y<self.height):
+                if(self.map[bullet_y][bullet_x] == 2):
+                    self.map[bullet_y][bullet_x] = 0
+                    del(self.bullets[ind])
+                    print("kolizja z zniszczalnym",bullet_x,bullet_y)
+                elif(self.map[bullet_y][bullet_x] == 1):
+                    del(self.bullets[ind])
+                    print("kolizja z niezniszczalnym",bullet_x,bullet_y)
+        #TODO check collision each tick
     def display_map(self):
         system('cls')  # clearing console
         for i in range(0,self.height):

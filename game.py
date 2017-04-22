@@ -1,7 +1,8 @@
-from level import Level
-from time import sleep
 import sys
+
 from gameobjects import *
+from level import Level
+
 
 class Game():
     width = 16

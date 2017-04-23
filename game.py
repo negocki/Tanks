@@ -13,7 +13,7 @@ class Game():
         self.gamelevel.display_map()
         print()
 
-        while(self.game_not_over):
+        while(not self.game_not_over):
             getKey = sys.stdin.read(1)
             if(getKey=="d"):
                 if(self.gamelevel.players[0].x_pos < self.width-1):

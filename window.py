@@ -9,7 +9,7 @@ class GameWindow(QDialog):
 
 
     def __init__(self):
-        tankgame = Game()
+        self.tankgame = Game()
         QMainWindow.__init__(self)
         self.ui = loadUi('./dialog.ui',self) #todo rendering game level on screen
         self.scene = QGraphicsScene(0, 0, 570, 460)
@@ -28,22 +28,64 @@ class GameWindow(QDialog):
         for j in range(16):
             gfxgrass = []
             gfxrock = []
+            gfxtank = []
+            gfxapc = []
+            gfxbullet = []
+            gfxbuilding = []
             for i in range(16):
                 choose = bool(random.getrandbits(1))
-                if(choose):
-                    gfxgrass.append(self.scene.addPixmap(self.grass))
-
+                if choose:
+                    gfxgrass.append(self.scene.addPixmap(self.grass)) # displaying grass and dirt randomly
                 else:
                     gfxgrass.append(self.scene.addPixmap(self.dirt))
-                    gfxrock.append(self.scene.addPixmap(self.building))
-                if(j%2==0):
-                    if(not choose):
-                        gfxrock[len(gfxrock)-1].setOffset(i * 32 + 32, 16 + 26 * j)
+
+                if j%2==0:
+                    # if not choose:
+                       # gfxrock[len(gfxrock)-1].setOffset(i * 32 + 32, 16 + 26 * j)
                     gfxgrass[i].setOffset(i*32+32,16+26*j)
                 else:
-                    if (not choose):
-                        gfxrock[len(gfxrock)-1].setOffset(i * 32 + 16, 16 + 26 * j)
+                    #if not choose:
+                       # gfxrock[len(gfxrock)-1].setOffset(i * 32 + 16, 16 + 26 * j)
                     gfxgrass[i].setOffset(i * 32 + 16, 16 + 26 * j)
+
+                if self.tankgame.gamelevel.map[j][i] == 1: # indestructable obstacle
+                    gfxrock.append(self.scene.addPixmap(self.mount))
+                    if j%2 == 0:
+                        gfxrock[len(gfxrock)-1].setOffset(i * 32 + 32, 16 + 26 * j) # offset for hexgrid
+                    else:
+                        gfxrock[len(gfxrock) - 1].setOffset(i * 32 + 16, 16 + 26 * j)
+
+                if self.tankgame.gamelevel.map[j][i] == 2: # destructable building
+                    gfxbuilding.append(self.scene.addPixmap(self.building))
+                    if j%2 == 0:
+                        gfxbuilding[len(gfxbuilding)-1].setOffset(i * 32 + 32, 16 + 26 * j) # offset for hexgrid
+                    else:
+                        gfxbuilding[len(gfxbuilding) - 1].setOffset(i * 32 + 16, 16 + 26 * j)
+
+                detected_tank = self.tankgame.gamelevel.check_for_player_tank(i, j)
+                detected_enemy = self.tankgame.gamelevel.check_for_enemy_tank(i, j)
+
+                if detected_tank != -1: # player tank
+                    gfxtank.append(self.scene.addPixmap(self.tank))
+                    if j%2 == 0:
+                        gfxtank[len(gfxtank)-1].setOffset(i * 32 + 32, 16 + 26 * j) # offset for hexgrid
+                    else:
+                        gfxtank[len(gfxtank) - 1].setOffset(i * 32 + 16, 16 + 26 * j)
+
+                if detected_enemy != -1 and len(self.tankgame.gamelevel.enemies)>0: # enemy tanks
+                    gfxapc.append(self.scene.addPixmap(self.apc))
+                    if j%2 == 0:
+                        gfxapc[len(gfxapc)-1].setOffset(i * 32 + 32, 16 + 26 * j) # offset for hexgrid
+                    else:
+                        gfxapc[len(gfxapc) - 1].setOffset(i * 32 + 16, 16 + 26 * j)
+
+                if self.tankgame.gamelevel.check_for_bullet(i, j): # bullets
+                    gfxbullet.append(self.scene.addPixmap(self.bullet))
+                    if j%2 == 0:
+                        gfxbullet[len(gfxbullet)-1].setOffset(i * 32 + 32, 16 + 26 * j) # offset for hexgrid
+                    else:
+                        gfxbullet[len(gfxbullet) - 1].setOffset(i * 32 + 16, 16 + 26 * j)
+
 
         self.ui.graphicsView.setScene(self.scene)
 

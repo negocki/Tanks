@@ -6,8 +6,8 @@ from level import Level
 
 class Game():
     width = 16
-    height = 10
-    gamelevel = Level("map1.txt",16,10)
+    height = 16
+    gamelevel = Level("map1.txt",16,16)
     game_not_over = True
     def __init__(self):
         self.gamelevel.display_map()

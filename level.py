@@ -2,7 +2,7 @@ from gameobjects import *
 from os import system
 class Level:
     width = 16
-    height = 10 #default
+    height = 16 #default
     maxenemies = 1
     playerscount = 1 #how many players
     players = [playerscount]
@@ -62,7 +62,7 @@ class Level:
             bullet_x = self.bullets[ind].x_pos
             bullet_y = self.bullets[ind].y_pos
             enemy_tank = self.check_for_enemy_tank(bullet_x,bullet_y)
-            if(bullet_x>0 and bullet_x<self.width and bullet_y>0 and bullet_y<self.height):
+            if(bullet_x>-1 and bullet_x<self.width and bullet_y>-1 and bullet_y<self.height):
                 if(self.map[bullet_y][bullet_x] == 2):
                     self.map[bullet_y][bullet_x] = 0
                     del(self.bullets[ind])

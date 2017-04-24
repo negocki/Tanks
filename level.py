@@ -52,7 +52,7 @@ class Level:
                 isbullet = True
         return isbullet
     def check_collision(self,x,y):
-        if(self.map[y][x] != 0): #TODO tank collision check
+        if self.map[y][x] != 0 or self.check_for_enemy_tank(x,y) != -1 or self.check_for_player_tank(x,y) != -1: #TODO tank collision check
             print("Collision: ",x,y) #collision debug
             return True
         else:

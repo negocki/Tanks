@@ -3,7 +3,8 @@ from PyQt5.QtWidgets import *
 
 import sys
 
-if(__name__ == "__main__"):
+
+if __name__ == "__main__":
 
     qApp = QApplication(sys.argv)
     app = GameWindow()

@@ -2,16 +2,22 @@ from PyQt5.QtCore import QObject
 from PyQt5.uic import loadUi
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtCore import QObject, Qt
+from PyQt5.QtCore import QObject, Qt, QTimer
 import random
 from game import Game
 from gameobjects import Bullet
-class GameWindow(QDialog):
+from xmlparser import XMLParse
 
+
+class GameWindow(QDialog):
 
     def __init__(self):
         self.width = 16
         self.height = 16
+
+        self.xmlp = XMLParse()
+
+
         self.tankgame = Game()
         self.terrain_generated = False
         QMainWindow.__init__(self)
@@ -26,7 +32,22 @@ class GameWindow(QDialog):
         self.bullet = QtGui.QPixmap("gfx/Target.png")
         self.building = QtGui.QPixmap("gfx/Building.png")
         self.display_map()
+
+        self.timer = QTimer(self)
+
+        self.timer.start(500)
     # self.ui.pushButton.clicked.connect(self.butonClick)
+    def time(self):
+        for bullet, i in enumerate(self.tankgame.gamelevel.bullets):
+            self.tankgame.gamelevel.bullets[bullet].move()
+            if ((self.tankgame.gamelevel.bullets[bullet].x_pos < 0) or (
+                self.tankgame.gamelevel.bullets[bullet].x_pos > self.width) or (
+                        self.tankgame.gamelevel.bullets[bullet].y_pos < 0) or (
+                self.tankgame.gamelevel.bullets[bullet].y_pos > self.height)):
+                del (self.tankgame.gamelevel.bullets[bullet])
+
+        self.tankgame.gamelevel.bullet_collision_check()
+        self.display_map()  # refreshing screen
 
     def display_map(self):
         for j in range(16):
@@ -40,7 +61,7 @@ class GameWindow(QDialog):
             for i in range(16):
 
                 choose = True  # bool(random.getrandbits(1))
-                if choose: # todo terrain not changing
+                if choose:  # todo terrain not changing
                     gfxgrass.append(self.scene.addPixmap(self.grass)) # displaying grass and dirt randomly
                 else:
                     gfxgrass.append(self.scene.addPixmap(self.dirt))
@@ -105,17 +126,23 @@ class GameWindow(QDialog):
                                                                self.tankgame.gamelevel.players[0].y_pos - 1)
                 if not collision:
                     self.tankgame.gamelevel.players[0].move(6)  # going up-left
+                    self.xmlp.addAction("playermove", "6")
+                    # self.xmlp.saveState(self.tankgame.gamelevel)
 
         if event.key() == Qt.Key_A:
             self.tankgame.gamelevel.players[0].rotation = 5
             if (self.tankgame.gamelevel.players[0].x_pos > 0):
                 if (not (self.tankgame.gamelevel.check_collision(self.tankgame.gamelevel.players[0].x_pos - 1, self.tankgame.gamelevel.players[0].y_pos))):
                     self.tankgame.gamelevel.players[0].move(5)  # going left
+                    self.xmlp.addAction("playermove", "5")
+
+
         if event.key() == Qt.Key_S:
             if (len(self.tankgame.gamelevel.bullets) < self.tankgame.gamelevel.maxbullets):
                 self.tankgame.gamelevel.bullets.append(Bullet(self.tankgame.gamelevel.players[0].x_pos, self.tankgame.gamelevel.players[0].y_pos,
                                                      self.tankgame.gamelevel.players[0].rotation))
-            print()
+                self.xmlp.addAction("shoot", str(self.tankgame.gamelevel.players[0].rotation))
+
         if event.key() == Qt.Key_Z:
             self.tankgame.gamelevel.players[0].rotation = 4
             collision = False
@@ -128,6 +155,7 @@ class GameWindow(QDialog):
                                                                self.tankgame.gamelevel.players[0].y_pos + 1)
                 if (not (collision)):
                     self.tankgame.gamelevel.players[0].move(4)  # going down-left
+                    self.xmlp.addAction("playermove", "4")
 
         if event.key() == Qt.Key_X:
             self.tankgame.gamelevel.players[0].rotation = 3
@@ -141,6 +169,7 @@ class GameWindow(QDialog):
                                                                self.tankgame.gamelevel.players[0].y_pos + 1)
                 if (not (collision)):
                     self.tankgame.gamelevel.players[0].move(3)  # going down-right
+                    self.xmlp.addAction("playermove", "3")
 
         if event.key() == Qt.Key_D:
             self.tankgame.gamelevel.players[0].rotation = 2
@@ -148,12 +177,13 @@ class GameWindow(QDialog):
                 if (not (self.tankgame.gamelevel.check_collision(self.tankgame.gamelevel.players[0].x_pos + 1,
                                                         self.tankgame.gamelevel.players[0].y_pos))):  # collision check
                     self.tankgame.gamelevel.players[0].move(2)  # going right
+                    self.xmlp.addAction("playermove", "2")
 
         if event.key() == Qt.Key_E:
             self.tankgame.gamelevel.players[0].rotation = 1
             collision = False
-            if ((self.tankgame.gamelevel.players[0].y_pos > 0) and (self.tankgame.gamelevel.players[0].x_pos < self.width - 1)):
-                if (self.tankgame.gamelevel.players[0].y_pos % 2 != 0):
+            if self.tankgame.gamelevel.players[0].y_pos > 0 and self.tankgame.gamelevel.players[0].x_pos < self.width - 1:
+                if self.tankgame.gamelevel.players[0].y_pos % 2 != 0:
                     collision = self.tankgame.gamelevel.check_collision(self.tankgame.gamelevel.players[0].x_pos + 1,
                                                                self.tankgame.gamelevel.players[0].y_pos - 1)
                 else:
@@ -161,6 +191,7 @@ class GameWindow(QDialog):
                                                                self.tankgame.gamelevel.players[0].y_pos - 1)
                 if (not (collision)):
                     self.tankgame.gamelevel.players[0].move(1)  # going up-right
+                    self.xmlp.addAction("playermove", "1")
 
         for bullet, i in enumerate(self.tankgame.gamelevel.bullets):
             self.tankgame.gamelevel.bullets[bullet].move()

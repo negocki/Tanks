@@ -28,10 +28,11 @@ class Level:
             line = fmap.readline()
             #print(line)
             for j in range(0,self.width):
-                self.map[i][j] = int(line[j]) #string from file to int in list
+                self.map[i][j] = int(line[j])  # string from file to int in list
         fmap.close()
         print("Level loaded.")
-    def check_for_player_tank(self,x,y):  #function for checking if there is a tank at x,y
+
+    def check_for_player_tank(self,x,y):  # function for checking if there is a tank at x,y
         for i in range(0,self.playerscount):
             if((self.players[i].x_pos == x) and (self.players[i].y_pos == y)):
                 return i
@@ -40,11 +41,11 @@ class Level:
 
     def check_for_enemy_tank(self, x, y):  # function for checking if there is a tank at x,y
         for i,tank in enumerate(self.enemies):
-            if ((self.enemies[i].x_pos == x) and (self.enemies[i].y_pos == y)):
+            if self.enemies[i].x_pos == x and self.enemies[i].y_pos == y:
                 return i
             else:
                 return -1
-    #TODO check for enemy tank and display it
+
     def check_for_bullet(self,x,y):
         isbullet = False
         for bullet,i in enumerate(self.bullets):
@@ -52,7 +53,7 @@ class Level:
                 isbullet = True
         return isbullet
     def check_collision(self,x,y):
-        if self.map[y][x] != 0 or self.check_for_enemy_tank(x,y) != -1 or self.check_for_player_tank(x,y) != -1: #TODO tank collision check
+        if self.map[y][x] != 0 or self.check_for_enemy_tank(x,y) != -1 or self.check_for_player_tank(x,y) != -1:
             print("Collision: ",x,y) #collision debug
             return True
         else:
@@ -72,7 +73,7 @@ class Level:
                     print("kolizja z niezniszczalnym",bullet_x,bullet_y)
                 elif(enemy_tank != -1):
                     if(len(self.enemies)>0):
-                        del(self.bullets[ind])
+                        del(self.bullets[ind]) # todo deleting enemy bug
                         del(self.enemies[enemy_tank])
                         self.players[0].score+=100
         #TODO check collision each tick
@@ -98,4 +99,3 @@ class Level:
                     print("%",end=" ") #destructible obstacle
             print()
         print()
-        # TODO more tiles

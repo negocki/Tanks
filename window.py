@@ -17,13 +17,11 @@ class GameWindow(QDialog):
 
         self.xmlp = XMLParse()
 
-
         self.tankgame = Game()
         self.terrain_generated = False
         QMainWindow.__init__(self)
         self.ui = loadUi('./dialog.ui',self) #todo rendering game level on screen
         self.scene = QGraphicsScene(0, 0, 570, 460)
-        # self.item = QGraphicsEllipseItem(20, 20, 40, 40)
         self.grass = QtGui.QPixmap("gfx/grass.png")  # loading tiles
         self.dirt = QtGui.QPixmap("gfx/dirt.png")
         self.mount = QtGui.QPixmap("gfx/Mountain.png")
@@ -33,11 +31,15 @@ class GameWindow(QDialog):
         self.building = QtGui.QPixmap("gfx/Building.png")
         self.display_map()
 
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.time_tick) # starting timer
-        self.timer.start(500)
+        self.bullet_timer = QTimer(self)
+        self.bullet_timer.timeout.connect(self.bullet_tick) # starting timer
+        self.bullet_timer.start(500)
+
+        self.enemy_timer = QTimer(self)
+        self.enemy_timer.timeout.connect(self.enemy_tick)  # starting timer
+        self.enemy_timer.start(1000)
     # self.ui.pushButton.clicked.connect(self.butonClick)
-    def time_tick(self):
+    def bullet_tick(self):
         for bullet, i in enumerate(self.tankgame.gamelevel.bullets):
             self.tankgame.gamelevel.bullets[bullet].move()
             if ((self.tankgame.gamelevel.bullets[bullet].x_pos < 0) or (
@@ -46,6 +48,103 @@ class GameWindow(QDialog):
                 self.tankgame.gamelevel.bullets[bullet].y_pos > self.height)):
                 del (self.tankgame.gamelevel.bullets[bullet])
         # TODO enemy tank move
+
+        self.tankgame.gamelevel.bullet_collision_check()
+        self.display_map()  # refreshing screen
+
+    def enemy_tick(self):
+        for num in range(self.tankgame.gamelevel.current_enemies):
+            direction_choosen = False
+            while not direction_choosen:
+                rand_direction = random.randint(1, 7)
+
+                if rand_direction == 1:
+                    self.tankgame.gamelevel.enemies[num].rotation = 1
+                    if self.tankgame.gamelevel.enemies[num].y_pos > 0 and self.tankgame.gamelevel.enemies[
+                        num].x_pos < self.width - 1:
+                        if self.tankgame.gamelevel.enemies[num].y_pos % 2 != 0:
+                            collision = self.tankgame.gamelevel.check_collision(
+                                self.tankgame.gamelevel.enemies[num].x_pos + 1,
+                                self.tankgame.gamelevel.enemies[num].y_pos - 1)
+                        else:
+                            collision = self.tankgame.gamelevel.check_collision(
+                                self.tankgame.gamelevel.enemies[num].x_pos,
+                                self.tankgame.gamelevel.enemies[num].y_pos - 1)
+                        if not collision:
+                            self.tankgame.gamelevel.enemies[num].move(1)  # going up-right
+                            direction_choosen = True
+                            self.xmlp.addAction("enemymove", "1", num)
+
+                elif rand_direction == 2:
+                    self.tankgame.gamelevel.enemies[num].rotation = 2
+                    if (self.tankgame.gamelevel.enemies[num].x_pos < self.width - 1):
+                        if (not (self.tankgame.gamelevel.check_collision(self.tankgame.gamelevel.enemies[num].x_pos + 1,
+                                                                         self.tankgame.gamelevel.enemies[
+                                                                             num].y_pos))):  # collision check
+                            self.tankgame.gamelevel.enemies[num].move(2)  # going right
+                            direction_choosen = True
+                            self.xmlp.addAction("enemymove", "2", num)
+
+                elif rand_direction == 3:
+                    self.tankgame.gamelevel.enemies[num].rotation = 3
+                    if ((self.tankgame.gamelevel.enemies[num].y_pos < self.height)
+                        and (self.tankgame.gamelevel.enemies[num].x_pos < self.width - 1)):
+                        if (self.tankgame.gamelevel.enemies[num].y_pos % 2 != 0):
+                            collision = self.tankgame.gamelevel.check_collision(
+                                self.tankgame.gamelevel.enemies[num].x_pos + 1,
+                                self.tankgame.gamelevel.enemies[num].y_pos + 1)
+                        else:
+                            collision = self.tankgame.gamelevel.check_collision(
+                                self.tankgame.gamelevel.enemies[num].x_pos,
+                                self.tankgame.gamelevel.enemies[num].y_pos + 1)
+                        if not collision:
+                            self.tankgame.gamelevel.enemies[num].move(3)  # going down-right
+                            direction_choosen = True
+                            self.xmlp.addAction("enemymove", "3", num)
+
+                elif rand_direction == 4:
+                    self.tankgame.gamelevel.enemies[num].rotation = 4
+                    if ((self.tankgame.gamelevel.enemies[num].y_pos < self.height) and
+                            (self.tankgame.gamelevel.enemies[num].x_pos > 0)):
+                        if (self.tankgame.gamelevel.enemies[num].y_pos % 2 != 0):
+                            collision = self.tankgame.gamelevel.check_collision(
+                                self.tankgame.gamelevel.enemies[num].x_pos,
+                                self.tankgame.gamelevel.enemies[num].y_pos + 1)
+                        else:
+                            collision = self.tankgame.gamelevel.check_collision(
+                                self.tankgame.gamelevel.enemies[num].x_pos - 1,
+                                self.tankgame.gamelevel.enemies[num].y_pos + 1)
+                        if (not (collision)):
+                            self.tankgame.gamelevel.enemies[num].move(4)  # going down-left
+                            direction_choosen = True
+                            self.xmlp.addAction("enemymove", "4", num)
+
+                elif rand_direction == 5:
+                    self.tankgame.gamelevel.enemies[num].rotation = 5
+                    if (self.tankgame.gamelevel.enemies[num].x_pos > 0):
+                        if (not (self.tankgame.gamelevel.check_collision(self.tankgame.gamelevel.enemies[num].x_pos - 1,
+                                                                         self.tankgame.gamelevel.enemies[num].y_pos))):
+                            self.tankgame.gamelevel.enemies[num].move(5)  # going left
+                            direction_choosen = True
+                            self.xmlp.addAction("enemymove", "5", num)
+                elif rand_direction == 6:
+                    self.tankgame.gamelevel.enemies[num].rotation = 6
+                    if ((self.tankgame.gamelevel.enemies[num].y_pos > 0) and (
+                                self.tankgame.gamelevel.enemies[num].x_pos > 0)):  # TODO q and z bug at corner
+                        if (self.tankgame.gamelevel.enemies[num].y_pos % 2 != 0):
+                            collision = self.tankgame.gamelevel.check_collision(
+                                self.tankgame.gamelevel.enemies[num].x_pos,
+                                self.tankgame.gamelevel.enemies[num].y_pos - 1)
+                        else:
+                            collision = self.tankgame.gamelevel.check_collision(
+                                self.tankgame.gamelevel.enemies[num].x_pos - 1,
+                                self.tankgame.gamelevel.enemies[num].y_pos - 1)
+                        if not collision:
+                            self.tankgame.gamelevel.enemies[num].move(6)  # going up-left
+                            direction_choosen = True
+                            self.xmlp.addAction("enemymove", "6", num)
+                            # for 7 stay in place
+
         self.tankgame.gamelevel.bullet_collision_check()
         self.display_map()  # refreshing screen
 
@@ -127,7 +226,7 @@ class GameWindow(QDialog):
                                                                self.tankgame.gamelevel.players[0].y_pos - 1)
                 if not collision:
                     self.tankgame.gamelevel.players[0].move(6)  # going up-left
-                    self.xmlp.addAction("playermove", "6")
+                    self.xmlp.addAction("playermove", "6",0)
                     # self.xmlp.saveState(self.tankgame.gamelevel)
 
         if event.key() == Qt.Key_A:
@@ -136,7 +235,7 @@ class GameWindow(QDialog):
                 if (not (self.tankgame.gamelevel.check_collision(self.tankgame.gamelevel.players[0].x_pos - 1,
                                                                  self.tankgame.gamelevel.players[0].y_pos))):
                     self.tankgame.gamelevel.players[0].move(5)  # going left
-                    self.xmlp.addAction("playermove", "5")
+                    self.xmlp.addAction("playermove", "5",0)
 
 
         if event.key() == Qt.Key_S:
@@ -144,7 +243,7 @@ class GameWindow(QDialog):
                 self.tankgame.gamelevel.bullets.append(Bullet(self.tankgame.gamelevel.players[0].x_pos,
                                                               self.tankgame.gamelevel.players[0].y_pos,
                                                      self.tankgame.gamelevel.players[0].rotation))
-                self.xmlp.addAction("shoot", str(self.tankgame.gamelevel.players[0].rotation))
+                self.xmlp.addAction("shoot", str(self.tankgame.gamelevel.players[0].rotation),0)
 
         if event.key() == Qt.Key_Z:
             self.tankgame.gamelevel.players[0].rotation = 4
@@ -159,7 +258,7 @@ class GameWindow(QDialog):
                                                                self.tankgame.gamelevel.players[0].y_pos + 1)
                 if (not (collision)):
                     self.tankgame.gamelevel.players[0].move(4)  # going down-left
-                    self.xmlp.addAction("playermove", "4")
+                    self.xmlp.addAction("playermove", "4",0)
 
         if event.key() == Qt.Key_X:
             self.tankgame.gamelevel.players[0].rotation = 3
@@ -174,7 +273,7 @@ class GameWindow(QDialog):
                                                                self.tankgame.gamelevel.players[0].y_pos + 1)
                 if (not (collision)):
                     self.tankgame.gamelevel.players[0].move(3)  # going down-right
-                    self.xmlp.addAction("playermove", "3")
+                    self.xmlp.addAction("playermove", "3",0)
 
         if event.key() == Qt.Key_D:
             self.tankgame.gamelevel.players[0].rotation = 2
@@ -182,7 +281,7 @@ class GameWindow(QDialog):
                 if (not (self.tankgame.gamelevel.check_collision(self.tankgame.gamelevel.players[0].x_pos + 1,
                                                         self.tankgame.gamelevel.players[0].y_pos))):  # collision check
                     self.tankgame.gamelevel.players[0].move(2)  # going right
-                    self.xmlp.addAction("playermove", "2")
+                    self.xmlp.addAction("playermove", "2",0)
 
         if event.key() == Qt.Key_E:
             self.tankgame.gamelevel.players[0].rotation = 1
@@ -196,7 +295,7 @@ class GameWindow(QDialog):
                                                                self.tankgame.gamelevel.players[0].y_pos - 1)
                 if (not (collision)):
                     self.tankgame.gamelevel.players[0].move(1)  # going up-right
-                    self.xmlp.addAction("playermove", "1")
+                    self.xmlp.addAction("playermove", "1",0)
 
         for bullet, i in enumerate(self.tankgame.gamelevel.bullets):
             self.tankgame.gamelevel.bullets[bullet].move()

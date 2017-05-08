@@ -1,5 +1,12 @@
-from game import Game
+from window import GameWindow
+from PyQt5.QtWidgets import *
 
-if(__name__ == "__main__"):
-    tankgame = Game()
-    tankgame.gameLoop()
+import sys
+
+
+if __name__ == "__main__":
+
+    qApp = QApplication(sys.argv)
+    app = GameWindow()
+    app.show()
+    sys.exit(qApp.exec_())

@@ -50,6 +50,7 @@ class GameWindow(QDialog):
         self.display_map()  # refreshing screen
 
     def display_map(self):
+        self.tankgame.gamelevel.next_turn() # increasing turn number
         for j in range(16):
             gfxgrass = []
             gfxrock = []

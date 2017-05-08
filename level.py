@@ -9,9 +9,11 @@ class Level:
     players[0] = PlayerTank(10,5,1)
     enemies = [maxenemies]
     enemies[0] = Tank(6,1,2)
+    current_enemies = 1
     maxbullets = 2
     bullets = [maxbullets]
     bullets[0] = Bullet(-1,-1,6)
+    turn = 0
 
     def __init__(self,file,wid,hei): #opening file with map and loading it to 2D list
         self.map = []
@@ -26,7 +28,6 @@ class Level:
         print("Loading ",file)
         for i in range(0,self.height):
             line = fmap.readline()
-            #print(line)
             for j in range(0,self.width):
                 self.map[i][j] = int(line[j])  # string from file to int in list
         fmap.close()
@@ -41,10 +42,11 @@ class Level:
 
     def check_for_enemy_tank(self, x, y):  # function for checking if there is a tank at x,y
         for i,tank in enumerate(self.enemies):
-            if self.enemies[i].x_pos == x and self.enemies[i].y_pos == y:
+            if self.enemies[i].x_pos == x and self.enemies[i].y_pos == y and self.current_enemies > 0:
                 return i
             else:
                 return -1
+        return -1
 
     def check_for_bullet(self,x,y):
         isbullet = False
@@ -73,10 +75,11 @@ class Level:
                     print("kolizja z niezniszczalnym",bullet_x,bullet_y)
                 elif(enemy_tank != -1):
                     if(len(self.enemies)>0):
-                        del(self.bullets[ind]) # todo deleting enemy bug
+                        del(self.bullets[ind])
                         del(self.enemies[enemy_tank])
+                        self.current_enemies -= 1
                         self.players[0].score+=100
-        #TODO check collision each tick
+
     def display_map(self):
         system('cls')  # clearing console
         for i in range(0,self.height):
@@ -99,3 +102,6 @@ class Level:
                     print("%",end=" ") #destructible obstacle
             print()
         print()
+
+    def next_turn(self):
+        self.turn += 1;

@@ -34,10 +34,10 @@ class GameWindow(QDialog):
         self.display_map()
 
         self.timer = QTimer(self)
-
+        self.timer.timeout.connect(self.time_tick) # starting timer
         self.timer.start(500)
     # self.ui.pushButton.clicked.connect(self.butonClick)
-    def time(self):
+    def time_tick(self):
         for bullet, i in enumerate(self.tankgame.gamelevel.bullets):
             self.tankgame.gamelevel.bullets[bullet].move()
             if ((self.tankgame.gamelevel.bullets[bullet].x_pos < 0) or (
@@ -45,7 +45,7 @@ class GameWindow(QDialog):
                         self.tankgame.gamelevel.bullets[bullet].y_pos < 0) or (
                 self.tankgame.gamelevel.bullets[bullet].y_pos > self.height)):
                 del (self.tankgame.gamelevel.bullets[bullet])
-
+        # TODO enemy tank move
         self.tankgame.gamelevel.bullet_collision_check()
         self.display_map()  # refreshing screen
 
@@ -133,21 +133,24 @@ class GameWindow(QDialog):
         if event.key() == Qt.Key_A:
             self.tankgame.gamelevel.players[0].rotation = 5
             if (self.tankgame.gamelevel.players[0].x_pos > 0):
-                if (not (self.tankgame.gamelevel.check_collision(self.tankgame.gamelevel.players[0].x_pos - 1, self.tankgame.gamelevel.players[0].y_pos))):
+                if (not (self.tankgame.gamelevel.check_collision(self.tankgame.gamelevel.players[0].x_pos - 1,
+                                                                 self.tankgame.gamelevel.players[0].y_pos))):
                     self.tankgame.gamelevel.players[0].move(5)  # going left
                     self.xmlp.addAction("playermove", "5")
 
 
         if event.key() == Qt.Key_S:
             if (len(self.tankgame.gamelevel.bullets) < self.tankgame.gamelevel.maxbullets):
-                self.tankgame.gamelevel.bullets.append(Bullet(self.tankgame.gamelevel.players[0].x_pos, self.tankgame.gamelevel.players[0].y_pos,
+                self.tankgame.gamelevel.bullets.append(Bullet(self.tankgame.gamelevel.players[0].x_pos,
+                                                              self.tankgame.gamelevel.players[0].y_pos,
                                                      self.tankgame.gamelevel.players[0].rotation))
                 self.xmlp.addAction("shoot", str(self.tankgame.gamelevel.players[0].rotation))
 
         if event.key() == Qt.Key_Z:
             self.tankgame.gamelevel.players[0].rotation = 4
             collision = False
-            if ((self.tankgame.gamelevel.players[0].y_pos < self.height) and (self.tankgame.gamelevel.players[0].x_pos > 0)):
+            if ((self.tankgame.gamelevel.players[0].y_pos < self.height) and
+                    (self.tankgame.gamelevel.players[0].x_pos > 0)):
                 if (self.tankgame.gamelevel.players[0].y_pos % 2 != 0):
                     collision = self.tankgame.gamelevel.check_collision(self.tankgame.gamelevel.players[0].x_pos,
                                                                self.tankgame.gamelevel.players[0].y_pos + 1)
@@ -161,7 +164,8 @@ class GameWindow(QDialog):
         if event.key() == Qt.Key_X:
             self.tankgame.gamelevel.players[0].rotation = 3
             collision = False
-            if ((self.tankgame.gamelevel.players[0].y_pos < self.height) and (self.tankgame.gamelevel.players[0].x_pos < self.width - 1)):
+            if ((self.tankgame.gamelevel.players[0].y_pos < self.height)
+                and (self.tankgame.gamelevel.players[0].x_pos < self.width - 1)):
                 if (self.tankgame.gamelevel.players[0].y_pos % 2 != 0):
                     collision = self.tankgame.gamelevel.check_collision(self.tankgame.gamelevel.players[0].x_pos + 1,
                                                                self.tankgame.gamelevel.players[0].y_pos + 1)
@@ -196,8 +200,10 @@ class GameWindow(QDialog):
 
         for bullet, i in enumerate(self.tankgame.gamelevel.bullets):
             self.tankgame.gamelevel.bullets[bullet].move()
-            if ((self.tankgame.gamelevel.bullets[bullet].x_pos < 0) or (self.tankgame.gamelevel.bullets[bullet].x_pos > self.width) or (
-                self.tankgame.gamelevel.bullets[bullet].y_pos < 0) or (self.tankgame.gamelevel.bullets[bullet].y_pos > self.height)):
+            if ((self.tankgame.gamelevel.bullets[bullet].x_pos < 0) or
+                    (self.tankgame.gamelevel.bullets[bullet].x_pos > self.width) or
+                    (self.tankgame.gamelevel.bullets[bullet].y_pos < 0) or
+                    (self.tankgame.gamelevel.bullets[bullet].y_pos > self.height)):
                 del (self.tankgame.gamelevel.bullets[bullet])
 
         self.tankgame.gamelevel.bullet_collision_check()

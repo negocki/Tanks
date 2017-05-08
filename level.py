@@ -10,7 +10,7 @@ class Level:
     enemies = [maxenemies]
     enemies[0] = Tank(6,1,2)
     current_enemies = 1
-    maxbullets = 2
+    maxbullets = 1
     bullets = [maxbullets]
     bullets[0] = Bullet(-1,-1,6)
     turn = 0

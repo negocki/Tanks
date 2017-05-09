@@ -3,12 +3,13 @@ from os import system
 class Level:
     width = 16
     height = 16 #default
-    maxenemies = 1
+    maxenemies = 2
     playerscount = 1 #how many players
     players = [playerscount]
     players[0] = PlayerTank(10,5,1)
     enemies = [maxenemies]
     enemies[0] = Tank(6,1,2)
+    #enemies.append(Tank(6,5,2))
     current_enemies = 1
     maxbullets = 1
     bullets = [maxbullets]
@@ -41,7 +42,7 @@ class Level:
                 return -1
 
     def check_for_enemy_tank(self, x, y):  # function for checking if there is a tank at x,y
-        for i,tank in enumerate(self.enemies):
+        for i,tank in enumerate(self.enemies): # TODO more than 1 enemy bug fix
             if self.enemies[i].x_pos == x and self.enemies[i].y_pos == y and self.current_enemies > 0:
                 return i
             else:

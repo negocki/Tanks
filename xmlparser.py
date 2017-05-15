@@ -8,11 +8,12 @@ class XMLParse:
         self.root = self.dom.createElement("game")
         self.dom.appendChild(self.root)
 
-    def addAction(self,action,value): # saving action to xml
+    def addAction(self,action,value,id): # saving action to xml
         turn = self.dom.createElement("turn")
         self.root.appendChild(turn)
 
         x = self.dom.createElement(action)
+        x.setAttribute("id", str(id))
         turn.appendChild(x)
         txt = self.dom.createTextNode(value)
         x.appendChild(txt)

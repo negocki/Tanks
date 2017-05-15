@@ -38,7 +38,107 @@ class GameWindow(QDialog):
         self.enemy_timer = QTimer(self)
         self.enemy_timer.timeout.connect(self.enemy_tick)  # starting timer
         self.enemy_timer.start(1000)
+
+        self.auto_player = False
+        self.player_timer = QTimer(self)
+        self.player_timer.timeout.connect(self.auto_player_tick)
+
     # self.ui.pushButton.clicked.connect(self.butonClick)
+    def auto_player_tick(self):
+        direction_choosen = False
+        while not direction_choosen:
+            rand_direction = random.randint(1, 7)
+
+            if rand_direction == 1:
+                self.tankgame.gamelevel.players[0].rotation = 1
+                if self.tankgame.gamelevel.players[0].y_pos > 0 and self.tankgame.gamelevel.players[
+                    0].x_pos < self.width - 1:
+                    if self.tankgame.gamelevel.players[0].y_pos % 2 != 0:
+                        collision = self.tankgame.gamelevel.check_collision(
+                            self.tankgame.gamelevel.players[0].x_pos + 1,
+                            self.tankgame.gamelevel.players[0].y_pos - 1)
+                    else:
+                        collision = self.tankgame.gamelevel.check_collision(
+                            self.tankgame.gamelevel.players[0].x_pos,
+                            self.tankgame.gamelevel.players[0].y_pos - 1)
+                    if not collision:
+                        self.tankgame.gamelevel.players[0].move(1)  # going up-right
+                        direction_choosen = True
+                        self.xmlp.addAction("playermove", "1", 0)
+
+            elif rand_direction == 2:
+                self.tankgame.gamelevel.players[0].rotation = 2
+                if (self.tankgame.gamelevel.players[0].x_pos < self.width - 1):
+                    if (not (self.tankgame.gamelevel.check_collision(self.tankgame.gamelevel.players[0].x_pos + 1,
+                                                                     self.tankgame.gamelevel.players[
+                                                                         0].y_pos))):  # collision check
+                        self.tankgame.gamelevel.players[0].move(2)  # going right
+                        direction_choosen = True
+                        self.xmlp.addAction("playermove", "2", 0)
+
+            elif rand_direction == 3:
+                self.tankgame.gamelevel.players[0].rotation = 3
+                if ((self.tankgame.gamelevel.players[0].y_pos < self.height)
+                    and (self.tankgame.gamelevel.players[0].x_pos < self.width - 1)):
+                    if (self.tankgame.gamelevel.players[0].y_pos % 2 != 0):
+                        collision = self.tankgame.gamelevel.check_collision(
+                            self.tankgame.gamelevel.players[0].x_pos + 1,
+                            self.tankgame.gamelevel.players[0].y_pos + 1)
+                    else:
+                        collision = self.tankgame.gamelevel.check_collision(
+                            self.tankgame.gamelevel.players[0].x_pos,
+                            self.tankgame.gamelevel.players[0].y_pos + 1)
+                    if not collision:
+                        self.tankgame.gamelevel.players[0].move(3)  # going down-right
+                        direction_choosen = True
+                        self.xmlp.addAction("playermove", "3", 0)
+
+            elif rand_direction == 4:
+                self.tankgame.gamelevel.players[0].rotation = 4
+                if ((self.tankgame.gamelevel.players[0].y_pos < self.height) and
+                        (self.tankgame.gamelevel.players[0].x_pos > 0)):
+                    if (self.tankgame.gamelevel.players[0].y_pos % 2 != 0):
+                        collision = self.tankgame.gamelevel.check_collision(
+                            self.tankgame.gamelevel.players[0].x_pos,
+                            self.tankgame.gamelevel.players[0].y_pos + 1)
+                    else:
+                        collision = self.tankgame.gamelevel.check_collision(
+                            self.tankgame.gamelevel.players[0].x_pos - 1,
+                            self.tankgame.gamelevel.players[0].y_pos + 1)
+                    if (not (collision)):
+                        self.tankgame.gamelevel.players[0].move(4)  # going down-left
+                        direction_choosen = True
+                        self.xmlp.addAction("playermove", "4", 0)
+
+            elif rand_direction == 5:
+                self.tankgame.gamelevel.players[0].rotation = 5
+                if (self.tankgame.gamelevel.players[0].x_pos > 0):
+                    if (not (self.tankgame.gamelevel.check_collision(self.tankgame.gamelevel.players[0].x_pos - 1,
+                                                                     self.tankgame.gamelevel.players[0].y_pos))):
+                        self.tankgame.gamelevel.players[0].move(5)  # going left
+                        direction_choosen = True
+                        self.xmlp.addAction("playermove", "5", 0)
+            elif rand_direction == 6:
+                self.tankgame.gamelevel.players[0].rotation = 6
+                if ((self.tankgame.gamelevel.players[0].y_pos > 0) and (
+                            self.tankgame.gamelevel.players[0].x_pos > 0)):  # TODO q and z bug at corner
+                    if (self.tankgame.gamelevel.players[0].y_pos % 2 != 0):
+                        collision = self.tankgame.gamelevel.check_collision(
+                            self.tankgame.gamelevel.players[0].x_pos,
+                            self.tankgame.gamelevel.players[0].y_pos - 1)
+                    else:
+                        collision = self.tankgame.gamelevel.check_collision(
+                            self.tankgame.gamelevel.players[0].x_pos - 1,
+                            self.tankgame.gamelevel.players[0].y_pos - 1)
+                    if not collision:
+                        self.tankgame.gamelevel.players[0].move(6)  # going up-left
+                        direction_choosen = True
+                        self.xmlp.addAction("playermove", "6", 0)
+                        # for 7 stay in place
+
+        self.tankgame.gamelevel.bullet_collision_check()
+        self.display_map()  # refreshing screen
+        
     def bullet_tick(self):
         for bullet, i in enumerate(self.tankgame.gamelevel.bullets):
             self.tankgame.gamelevel.bullets[bullet].move()
@@ -296,6 +396,15 @@ class GameWindow(QDialog):
                 if (not (collision)):
                     self.tankgame.gamelevel.players[0].move(1)  # going up-right
                     self.xmlp.addAction("playermove", "1",0)
+
+        if event.key() == Qt.Key_P: # AI playing
+            if self.auto_player:
+                self.auto_player = False
+                self.player_timer.stop()   # starting or stopping auto move
+            else:
+                self.auto_player = True
+                self.player_timer.start(500)
+
 
         for bullet, i in enumerate(self.tankgame.gamelevel.bullets):
             self.tankgame.gamelevel.bullets[bullet].move()
